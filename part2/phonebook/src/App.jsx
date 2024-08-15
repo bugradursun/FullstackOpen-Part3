@@ -10,6 +10,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [filterName, setFiltername] = useState("");
   const [filteredPersons, setFilteredpersons] = useState([]);
+  const [isFiltered, setIsFiltered] = useState(false);
 
   const addPerson = (event) => {
     event.preventDefault();
@@ -30,15 +31,22 @@ const App = () => {
       setNewName("");
     }
   };
+  const resetClick = () => {
+    console.log(persons); // bu kısmı refactor et
+    //resetleme mekanizması burada olacak
+  };
   const filterClick = (event) => {
     event.preventDefault();
     const filteredPersons = persons.filter((person) => {
       return person.name.toLowerCase().includes(filterName.toLowerCase());
     });
     if (filteredPersons) {
-      setPersons(filteredPersons);
+      setIsFiltered(true);
+      setFilteredpersons(filteredPersons);
     } else {
-      setPersons(persons);
+      //
+      setIsFiltered(false);
+      //setPersons({ name: "Arto hellas", number: "1111" });
     }
   };
 
@@ -56,7 +64,7 @@ const App = () => {
     //  setPersons(persons);
     //}
   };
-
+  //PART 2.9 DEVAM EDECEK
   const handleNameChange = (event) => {
     setNewName(event.target.value);
   };
@@ -72,6 +80,7 @@ const App = () => {
         filter shown with <input onChange={handleFilterName} />
       </div>
       <button onClick={filterClick}>filter</button>
+      <button onClick={resetClick}>reset</button>
       <h2>add a new</h2>
       <form onSubmit={addPerson}>
         <div>
@@ -85,13 +94,22 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers </h2>
-      <ul>
-        {persons.map((person) => (
+      {isFiltered ? (
+        filteredPersons.map((person) => (
           <li key={person.name}>
             {person.name} {person.number}
           </li>
-        ))}
-      </ul>
+        ))
+      ) : (
+        <ul>
+          {persons.map((person) => (
+            <li key={person.name}>
+              {person.name} {person.number}
+            </li>
+          ))}
+        </ul>
+      )}
+      <ul></ul>
     </div>
   );
 };
