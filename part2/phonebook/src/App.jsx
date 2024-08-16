@@ -32,11 +32,13 @@ const App = () => {
     }
   };
   const resetClick = () => {
-    console.log(persons); // bu kısmı refactor et
+    setIsFiltered(false);
+    //setPersons(persons);
+    // bu kısmı refactor et
     //resetleme mekanizması burada olacak
   };
   const filterClick = (event) => {
-    event.preventDefault();
+    //event.preventDefault();
     const filteredPersons = persons.filter((person) => {
       return person.name.toLowerCase().includes(filterName.toLowerCase());
     });
