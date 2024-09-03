@@ -1,8 +1,19 @@
 const express = require("express");
-
+const morgan = require("morgan");
 const app = express();
 
+/**HOW TO LOG REQUEST BODY
+ * Create a custom token
+ * use custom token in log format
+ * use morgan middleware
+ */
+
+morgan.token("body", (req) => JSON.stringify(req.body));
+app.use(
+  morgan(":method :url :status :res[content-length] - :response-time ms :body")
+);
 app.use(express.json());
+//app.use(morgan("tiny")); //MORGAN MIDDLEWARE
 
 let phoneBookData = [
   {
@@ -43,6 +54,38 @@ app.get("/api/persons/:id", (request, response) => {
   } else {
     response.json(person);
   }
+});
+
+app.delete("/api/persons/:id", (request, response) => {
+  const id = request.params.id;
+  phoneBookData = phoneBookData.filter((p) => p.id !== id);
+  response.status(204).end();
+});
+
+const generateRandomId = () => {
+  const generatedId = Math.floor(Math.random() * 1000);
+  return String(generatedId);
+};
+
+app.post("/api/persons", (request, response) => {
+  const body = request.body;
+  if (!body.name || !body.number) {
+    return response.status(400).json({
+      error: "name or number missing",
+    });
+  }
+  if (phoneBookData.find((p) => p.name === body.name)) {
+    return response.status(400).json({
+      error: "name already exists",
+    });
+  }
+  const person = {
+    id: generateRandomId(),
+    name: body.name,
+    number: body.number,
+  };
+  phoneBookData = phoneBookData.concat(person);
+  response.json(person);
 });
 app.get("/info", (request, response) => {
   const date = new Date();
